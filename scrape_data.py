@@ -45,8 +45,10 @@ li_openBeerMap = []
 api = overpy.Overpass()
 
 # zone dans laquelle rechercher
-bbox = (48.658291, 2.086790, 49.046940, 2.637910)  # Paris
+# Paris
+# bbox = (48.658291, 2.086790, 49.046940, 2.637910)  
 
+# Melbourne
 bbox = (-37.8140000 - 0.195, 144.96332 - 0.195, -37.8140000 + 0.195, 144.96332 + 0.195)  # Melbourne
 
 # stockages des résultats pour trier plus facilement ensuite
