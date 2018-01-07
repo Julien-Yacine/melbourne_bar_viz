@@ -143,7 +143,7 @@ leaflet() %>%
 # Coordinate of the place close to largest number of bar in a radius of 20, 100 and 500 meters
 
 # Sometimes you wanna go from one bar to another
-# Recherche google: "R number of point in a radius"
+# google: "R number of point in a radius"
 
 biere <- cbind(biere, sapply(c(20, 100, 500), function(x){
   rowSums(geosphere::distm(biere[, c("longitude", "latitude")], fun = distHaversine) < x)
