@@ -1,6 +1,6 @@
 ###########################################################################
 #
-# Title: Scrapping and vizualising the melbournian bar
+# Title: # Melbourne bar vizualisation with leaflet and R
 #
 # Author: Julien-Yacine Chaqra
 # Date: 07/01/2018
@@ -9,7 +9,9 @@
 
 # Packages ----------------------------------------------------------------
 # install.packages("rgdal")
+# devtools::install_github('rstudio/leaflet') 
 
+library(htmlwidgets)
 library(magrittr)
 library(deldir)
 library(rgdal)
@@ -19,7 +21,6 @@ library(leaflet)
 library(sp)
 library(KernSmooth)
 library(geosphere)
-
 
 
 
@@ -47,14 +48,14 @@ biere <- rgdal::readOGR("./melbourne_bar_viz.geojson") %>%
   distinct(longitude, latitude, .keep_all = TRUE)
 
 # Simple vizualisation
-leaflet() %>% 
+melbourne_bar_basic_map <- leaflet() %>% 
   addTiles() %>% 
   setView(lat = -37.814, lng = 144.96332 , zoom = 12) %>%
   addCircles(lng = biere$longitude, lat = biere$latitude, radius = 1) %>%
   addCircleMarkers(lng = biere$longitude, lat = biere$latitude, popup = biere$name, radius = 2) 
 
-
-
+melbourne_bar_basic_map
+saveWidget(widget = melbourne_bar_basic_map, file = "./melbourne_bar_basic_map.html")
 
 # Voronoi diagram ---------------------------------------------------------
 # Source
@@ -100,14 +101,16 @@ SPointsDF_to_voronoi_SPolysDF <- function(sp) {
 vor <- SPointsDF_to_voronoi_SPolysDF(sp = vor_pts)
 
 
-# Melbourne
-leaflet() %>% 
+# Voronoï
+melbourne_bar_voronoi_map <- leaflet() %>% 
   addTiles() %>% 
   setView(lat = -37.814, lng = 144.96332 , zoom = 12) %>%
   addPolygons(data = vor, color = "#FF1E90", fillColor = "transparent", weight = 2) %>% 
   addCircles(lng = biere$longitude, lat = biere$latitude, radius = 1) %>%
   addCircleMarkers(lng = biere$longitude, lat = biere$latitude, popup = biere$name, radius = 2) 
 
+melbourne_bar_voronoi_map
+saveWidget(widget = melbourne_bar_voronoi_map, file = "./melbourne_bar_voronoi_map.html")
 
 
 
@@ -130,13 +133,15 @@ pgons <- lapply(1:length(CL), function(i)
 spgons = SpatialPolygons(pgons)
 
 
-leaflet() %>% 
+melbourne_bar_density_map <- leaflet() %>% 
   addTiles() %>% 
   setView(lat = -37.814, lng = 144.96332 , zoom = 12) %>%
   addPolygons(data = spgons, color = heat.colors(n = NLEV, alpha = NULL)[LEVS]) %>% 
   addCircles(lng = biere$longitude, lat = biere$latitude, radius = 1) %>%
   addCircleMarkers(lng = biere$longitude, lat = biere$latitude, popup = biere$name, radius = 2) 
 
+melbourne_bar_density_map
+saveWidget(widget = melbourne_bar_density_map, file = "./melbourne_bar_density_map.html")
 
 
 
