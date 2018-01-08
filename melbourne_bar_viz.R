@@ -154,4 +154,4 @@ biere <- cbind(biere, sapply(c(20, 100, 500), function(x){
   rowSums(geosphere::distm(biere[, c("longitude", "latitude")], fun = distHaversine) < x)
 }) %>%  set_colnames(c("20m", "100m", "500m")))
 
-biere
+head(biere, 20)
