@@ -1,4 +1,4 @@
-# Melbourne bar vizualisation
+# Melbourne bar vizualisation with leaflet and R
 
 
 * **scrape_data.py**: scrapping informations about the melbournian bar - *based on the work of [Julien Moura](https://github.com/Guts/Paris-Beer-Week/blob/master/data/raw_data/getOpenBeerMap.py)* 
