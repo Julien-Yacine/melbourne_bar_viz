@@ -19,9 +19,11 @@ library(mapproj)
 library(dplyr)
 library(leaflet)
 library(sp)
+library(ggplot2)
 library(KernSmooth)
 library(geosphere)
-
+library(tableHTML)
+library(plotly)
 
 
 # Data --------------------------------------------------------------------
@@ -32,8 +34,6 @@ library(geosphere)
 ## Update the data from the overpass api -----------------------------------
 # execute_py_script <- paste0("python ", file.path(getwd(),"scrape_data.py"))
 # system(execute_py_script)
-
-
 
 
 # Import and vizualise ----------------------------------------------------
@@ -55,7 +55,7 @@ melbourne_bar_basic_map <- leaflet() %>%
   addCircleMarkers(lng = biere$longitude, lat = biere$latitude, popup = biere$name, radius = 2) 
 
 melbourne_bar_basic_map
-saveWidget(widget = melbourne_bar_basic_map, file = "./melbourne_bar_basic_map.html")
+# saveWidget(widget = melbourne_bar_basic_map, file = "./melbourne_bar_basic_map.html")
 
 # Voronoi diagram ---------------------------------------------------------
 # Source
@@ -110,11 +110,11 @@ melbourne_bar_voronoi_map <- leaflet() %>%
   addCircleMarkers(lng = biere$longitude, lat = biere$latitude, popup = biere$name, radius = 2) 
 
 melbourne_bar_voronoi_map
-saveWidget(widget = melbourne_bar_voronoi_map, file = "./melbourne_bar_voronoi_map.html")
+# saveWidget(widget = melbourne_bar_voronoi_map, file = "./melbourne_bar_voronoi_map.html")
 
 
 
-# Density map -------------------------------------------------------------
+# density heatmap  -------------------------------------------------------------
 # Source:
 # https://gis.stackexchange.com/questions/168886/r-how-to-build-heatmap-with-the-leaflet-package
 
@@ -141,17 +141,39 @@ melbourne_bar_density_map <- leaflet() %>%
   addCircleMarkers(lng = biere$longitude, lat = biere$latitude, popup = biere$name, radius = 2) 
 
 melbourne_bar_density_map
-saveWidget(widget = melbourne_bar_density_map, file = "./melbourne_bar_density_map.html")
+# saveWidget(widget = melbourne_bar_density_map, file = "./melbourne_bar_density_map.html")
 
 
 
-# Coordinate of the place close to largest number of bar in a radius of 20, 100 and 500 meters
+
+
+# Counting the number of bar in a radius of 20, 100 and 500 meters --------
 
 # Sometimes you wanna go from one bar to another
 # google: "R number of point in a radius"
 
-biere <- cbind(biere, sapply(c(20, 100, 500), function(x){
+biere_arround <- cbind(biere, sapply(c(20, 100, 500), function(x){
   rowSums(geosphere::distm(biere[, c("longitude", "latitude")], fun = distHaversine) < x)
-}) %>%  set_colnames(c("20m", "100m", "500m")))
+}) %>%  set_colnames(c("m_20", "m_100", "m_500"))) %>% arrange(desc(m_20), desc(m_100), desc(m_500))
 
-head(biere, 20)
+
+ggplot(data = biere_arround, aes(x = m_20)) +
+  geom_bar() +
+  scale_x_continuous(breaks = 0:3) +
+  ggtitle("Number of bars in a radius of 20 meters") +
+  xlab("Number of bars") +
+  ylab("Count") 
+
+ggplot(data = biere_arround, aes(x = m_100)) +
+  geom_bar() +
+  scale_x_continuous(breaks = 0:10) +
+  ggtitle("Number of bars in a radius of 100 meters") +
+  xlab("Number of bars") +
+  ylab("Count")
+
+ggplot(data = biere_arround, aes(x = m_500)) +
+  geom_bar() +
+  scale_x_continuous(breaks = seq(0, 60, 5)) +
+  ggtitle("Number of bars in a radius of 500 meters") +
+  xlab("Number of bars") +
+  ylab("Count")
